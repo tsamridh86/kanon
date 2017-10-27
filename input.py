@@ -44,11 +44,10 @@ def edgeReader(fileName):
 
 print(nodes, edges)
 # Create new threads
-threads = []
+
 thread1 = fileReaderThread(1, "nodeInputThread", nodeReader, "nodeList.txt")
 thread2 = fileReaderThread(2, "edgeInputThread", edgeReader, "edgeList.txt")
-threads.append(thread1)
-threads.append(thread2)
+
 # Start new Threads
 thread1.start()
 thread2.start()
@@ -60,4 +59,5 @@ G = nx.Graph()
 G.add_nodes_from(nodes)
 G.add_edges_from(edges)
 nx.draw(G)
+plt.savefig("plot.png")
 plt.show()
