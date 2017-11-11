@@ -90,12 +90,15 @@ class Ui_MainWindow(object):
         self.actionDocs.setObjectName(_fromUtf8("actionDocs"))
         self.actionAbout = QtGui.QAction(MainWindow)
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
+        self.actionRemove_Files = QtGui.QAction(MainWindow)
+        self.actionRemove_Files.setObjectName(_fromUtf8("actionRemove_Files"))
         self.menuFile.addAction(self.actionAdd_Node)
         self.menuFile.addAction(self.actionAdd_Edge)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave_as)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
+        self.menuEdit.addAction(self.actionRemove_Files)
         self.menuHelp.addAction(self.actionDocs)
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionAbout)
@@ -106,13 +109,13 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.kValueSlider, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), self.kValueHolder.show)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        
         # custom code
         self.imageHolder.setPixmap(QtGui.QPixmap('plot.png'))
         self.applyButton.clicked.connect(self.applyButtonClicked)
         self.kValueSlider.valueChanged.connect(self.displayChange)
         self.actionAdd_Node.triggered.connect(self.fileOpener)
         self.actionAdd_Edge.triggered.connect(self.fileOpener)
+        self.actionExit.triggered.connect(self.goOut)
 
     def applyButtonClicked(self):
         print("Apply button pressed ",self.kValueSlider.value())
@@ -130,7 +133,9 @@ class Ui_MainWindow(object):
         fileNames = dlg.selectedFiles()
         print(fileNames)
 
-        # default code
+    def goOut(self):
+        sys.exit()
+
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
         self.applyButton.setText(_translate("MainWindow", "Apply", None))
@@ -148,6 +153,7 @@ class Ui_MainWindow(object):
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
         self.actionDocs.setText(_translate("MainWindow", "Docs", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
+        self.actionRemove_Files.setText(_translate("MainWindow", "Remove Files", None))
 
 
 if __name__ == "__main__":
