@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.applyButton.setGeometry(QtCore.QRect(80, 100, 99, 27))
         self.applyButton.setObjectName(_fromUtf8("applyButton"))
         self.kanonText = QtGui.QLineEdit(self.centralwidget)
-        self.kanonText.setGeometry(QtCore.QRect(30, 10, 101, 27))
+        self.kanonText.setGeometry(QtCore.QRect(50, 10, 101, 27))
         self.kanonText.setMaxLength(15)
         self.kanonText.setFrame(False)
         self.kanonText.setEchoMode(QtGui.QLineEdit.Normal)
@@ -61,38 +61,81 @@ class Ui_MainWindow(object):
         self.imageHolder.setGeometry(QtCore.QRect(240, 20, 640, 480))
         self.imageHolder.setText(_fromUtf8(""))
         self.imageHolder.setObjectName(_fromUtf8("imageHolder"))
+        self.statsHolder = QtGui.QPlainTextEdit(self.centralwidget)
+        self.statsHolder.setGeometry(QtCore.QRect(20, 150, 171, 391))
+        self.statsHolder.setObjectName(_fromUtf8("statsHolder"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 933, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuEdit = QtGui.QMenu(self.menubar)
+        self.menuEdit.setObjectName(_fromUtf8("menuEdit"))
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
+        self.actionAdd_Node = QtGui.QAction(MainWindow)
+        self.actionAdd_Node.setObjectName(_fromUtf8("actionAdd_Node"))
+        self.actionAdd_Edge = QtGui.QAction(MainWindow)
+        self.actionAdd_Edge.setObjectName(_fromUtf8("actionAdd_Edge"))
+        self.actionSave_as = QtGui.QAction(MainWindow)
+        self.actionSave_as.setObjectName(_fromUtf8("actionSave_as"))
+        self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setObjectName(_fromUtf8("actionExit"))
+        self.actionDocs = QtGui.QAction(MainWindow)
+        self.actionDocs.setObjectName(_fromUtf8("actionDocs"))
+        self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
+        self.menuFile.addAction(self.actionAdd_Node)
+        self.menuFile.addAction(self.actionAdd_Edge)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionSave_as)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionExit)
+        self.menuHelp.addAction(self.actionDocs)
+        self.menuHelp.addSeparator()
+        self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuEdit.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
+
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.kValueSlider, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), self.kValueHolder.show)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        
-        # custom code
         self.imageHolder.setPixmap(QtGui.QPixmap('plot.png'))
         self.applyButton.clicked.connect(self.applyButtonClicked)
         self.kValueSlider.valueChanged.connect(self.displayChange)
 
     def applyButtonClicked(self):
         print("Apply button pressed ",self.kValueSlider.value())
+        self.kValueSlider.setValue(int(self.kValueHolder.text()))
 
     def displayChange(self, val):
         print(val)
         self.kValueHolder.setText(str(val))
 
+
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
         self.applyButton.setText(_translate("MainWindow", "Apply", None))
         self.kanonText.setText(_translate("MainWindow", "k-anonimizer", None))
+        self.statsHolder.setPlainText(_translate("MainWindow", "Stats:\n"
+"No. of Nodes :\n"
+"No. of Edges  :\n"
+"avg. k        :", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
+        self.menuEdit.setTitle(_translate("MainWindow", "Edit", None))
+        self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
+        self.actionAdd_Node.setText(_translate("MainWindow", "Add Node", None))
+        self.actionAdd_Edge.setText(_translate("MainWindow", "Add Edge", None))
+        self.actionSave_as.setText(_translate("MainWindow", "Save as", None))
+        self.actionExit.setText(_translate("MainWindow", "Exit", None))
+        self.actionDocs.setText(_translate("MainWindow", "Docs", None))
+        self.actionAbout.setText(_translate("MainWindow", "About", None))
 
 
 if __name__ == "__main__":
