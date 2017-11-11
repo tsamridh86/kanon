@@ -109,6 +109,8 @@ class Ui_MainWindow(object):
         self.imageHolder.setPixmap(QtGui.QPixmap('plot.png'))
         self.applyButton.clicked.connect(self.applyButtonClicked)
         self.kValueSlider.valueChanged.connect(self.displayChange)
+        self.actionAdd_Node.triggered.connect(self.fileOpener)
+        self.actionAdd_Edge.triggered.connect(self.fileOpener)
 
     def applyButtonClicked(self):
         print("Apply button pressed ",self.kValueSlider.value())
@@ -117,6 +119,14 @@ class Ui_MainWindow(object):
     def displayChange(self, val):
         print(val)
         self.kValueHolder.setText(str(val))
+
+    def fileOpener(self):
+        dlg = QtGui.QFileDialog()
+        dlg.setFileMode(QtGui.QFileDialog.AnyFile)
+        dlg.setFilter("Text files (*.txt)")
+        dlg.exec_()
+        fileNames = dlg.selectedFiles()
+        print(fileNames)
 
 
     def retranslateUi(self, MainWindow):
