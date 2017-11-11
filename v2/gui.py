@@ -106,6 +106,8 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.kValueSlider, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), self.kValueHolder.show)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+        # custom code
         self.imageHolder.setPixmap(QtGui.QPixmap('plot.png'))
         self.applyButton.clicked.connect(self.applyButtonClicked)
         self.kValueSlider.valueChanged.connect(self.displayChange)
@@ -128,7 +130,7 @@ class Ui_MainWindow(object):
         fileNames = dlg.selectedFiles()
         print(fileNames)
 
-
+        # default code
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
         self.applyButton.setText(_translate("MainWindow", "Apply", None))
