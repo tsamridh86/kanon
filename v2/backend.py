@@ -51,6 +51,12 @@ def generateNetwork(nodes,edges):
    G.add_edges_from(edges)
    nx.draw(G)
    plt.savefig("plot.png")
+   return G
+
+def clearNetwork():
+   G = nx.Graph()
+   nx.draw(G)
+   plt.savefig("plot.png")
 
 # print(nodes, edges)
 # Create new threads

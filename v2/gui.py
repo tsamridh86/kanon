@@ -120,6 +120,13 @@ class Ui_MainWindow(object):
         self.actionAdd_Node.triggered.connect(self.nodeOpener)
         self.actionAdd_Edge.triggered.connect(self.edgeOpener)
         self.actionExit.triggered.connect(self.goOut)
+        self.actionRemove_Files.triggered.connect(self.clearFiles)
+        self.plotNetwork()
+
+    def clearFiles(self):
+        self.nodes = []
+        self.edges = []
+        clearNetwork()
         self.plotNetwork()
 
     def applyButtonClicked(self):
@@ -127,7 +134,6 @@ class Ui_MainWindow(object):
         self.kValueSlider.setValue(int(self.kValueHolder.text()))
 
     def displayChange(self, val):
-        print(val)
         self.kValueHolder.setText(str(val))
 
     def nodeOpener(self):
