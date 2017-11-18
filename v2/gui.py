@@ -26,6 +26,7 @@ class Ui_MainWindow(object):
 
     nodes = []
     edges = []
+    graph = nx.Graph()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
@@ -121,17 +122,12 @@ class Ui_MainWindow(object):
         self.actionAdd_Edge.triggered.connect(self.edgeOpener)
         self.actionExit.triggered.connect(self.goOut)
         self.actionRemove_Files.triggered.connect(self.clearFiles)
-        self.plotNetwork()
-
-    def clearFiles(self):
-        self.nodes = []
-        self.edges = []
-        clearNetwork()
-        self.plotNetwork()
+        self.graph = self.plotNetwork()
 
     def applyButtonClicked(self):
         print("Apply button pressed ",self.kValueSlider.value())
         self.kValueSlider.setValue(int(self.kValueHolder.text()))
+
 
     def displayChange(self, val):
         self.kValueHolder.setText(str(val))
@@ -139,12 +135,12 @@ class Ui_MainWindow(object):
     def nodeOpener(self):
         nodeFile = self.fileOpener()
         self.nodes = nodeReader(nodeFile,self.nodes)
-        self.plotNetwork()
+        self.graph = self.plotNetwork()
 
     def edgeOpener(self):
         edgeFile = self.fileOpener()
         self.edges = edgeReader(edgeFile,self.edges)
-        self.plotNetwork()
+        self.graph = self.plotNetwork()
 
     def fileOpener(self):
         dlg = QtGui.QFileDialog()
@@ -155,8 +151,15 @@ class Ui_MainWindow(object):
         return (fileNames[0])
 
     def plotNetwork(self):
-        generateNetwork(self.nodes,self.edges)
+        graph = generateNetwork(self.nodes,self.edges,self.graph)
         self.imageHolder.setPixmap(QtGui.QPixmap('plot.png'))
+        return graph
+
+    def clearFiles(self):
+        self.nodes = []
+        self.edges = []
+        self.graph = clearNetwork(self.graph)
+        self.graph = self.plotNetwork()
 
     def goOut(self):
         sys.exit()
