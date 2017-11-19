@@ -127,7 +127,7 @@ class Ui_MainWindow(object):
     def applyButtonClicked(self):
         print("Apply button pressed ",self.kValueSlider.value())
         self.kValueSlider.setValue(int(self.kValueHolder.text()))
-
+        
 
     def displayChange(self, val):
         self.kValueHolder.setText(str(val))
