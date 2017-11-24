@@ -78,7 +78,7 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
     return anonymizedDegreeSequence 
 
 
-print(nodes, edges)
+# print(nodes, edges)
 # Create new threads
 
 thread1 = fileReaderThread(1, "nodeInputThread", nodeReader, "nodeList.txt")
@@ -90,20 +90,54 @@ thread2.start()
 thread1.join()
 thread2.join()
 
-print(nodes, edges)
+# print(nodes, edges)
 G = nx.Graph()
 G.add_nodes_from(nodes)
 G.add_edges_from(edges)
 view = nx.degree(G)
 view = sorted(view, key= lambda x: x[1] , reverse= True)
-degreeSequence = list(key for key,value in view)
-nodeId = list(value for key,value in view)
-# print(view)
-# print(degreeSequence)
-print(nodeId)
-nx.draw(G)
+degreeSequence = list(value for key,value in view)
+nodeId = list(key for key,value in view)
+initialView = {}
+for key,value in view:
+    initialView[key] = value
+# nx.draw(G)
 # plt.savefig("plot.png")
-# plt.show()
-print(kAnonimizer(degreeSequence,nodeId,len(nodeId),3))
+# plt.show()    
+# print ("corresponding nodes :",nodeId)
+# print ("originalDegreeSequence: ",degreeSequence)
+degreeSequence = (kAnonimizer(degreeSequence,nodeId,len(nodeId),3))
+# print("anonymizedDegreeSequence : ", degreeSequence)
+finalView = {}
+for i in range(len(nodeId)):
+    finalView[nodeId[i]] = degreeSequence[i]
+print ("initial view : ", initialView)
+print ("final view   : ",finalView)
+
+def removeValues( nodes ):
+    keylist = list(key for key in nodes)
+    for i in range(len(keylist)):
+        if nodes[keylist[i]] == 0:
+            nodes.pop(keylist[i])
+    return nodes
+
+remaining = {}
+for key in initialView:
+    if initialView[key] != finalView[key]:
+        remaining[key] = finalView[key] - initialView[key]
 
 
+print(remaining)
+
+for i in range(len(remaining)):
+    remaining = removeValues(remaining)
+    keylist = list(key for key in remaining)
+    if len(remaining) == 1:
+        break
+    for j in range(i+1,len(remaining)):
+        if (keylist[i], keylist[j]) not in G.edges():
+            G.add_edge(keylist[i],keylist[j])
+            remaining[keylist[i]]-=1
+            remaining[keylist[j]]-=1
+nx.draw(G)
+plt.show()
