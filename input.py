@@ -1,6 +1,7 @@
 import threading
 import networkx as nx
 import matplotlib.pyplot as plt
+from random import randrange
 
 class fileReaderThread (threading.Thread):
    def __init__(self, threadID, name , function, fileName):
@@ -106,7 +107,7 @@ for key,value in view:
 # plt.show()    
 # print ("corresponding nodes :",nodeId)
 # print ("originalDegreeSequence: ",degreeSequence)
-degreeSequence = (kAnonimizer(degreeSequence,nodeId,len(nodeId),3))
+degreeSequence = (kAnonimizer(degreeSequence,nodeId,len(nodeId),2))
 # print("anonymizedDegreeSequence : ", degreeSequence)
 finalView = {}
 for i in range(len(nodeId)):
@@ -129,15 +130,26 @@ for key in initialView:
 
 print(remaining)
 
-for i in range(len(remaining)):
-    remaining = removeValues(remaining)
-    keylist = list(key for key in remaining)
-    if len(remaining) == 1:
-        break
-    for j in range(i+1,len(remaining)):
-        if (keylist[i], keylist[j]) not in G.edges():
-            G.add_edge(keylist[i],keylist[j])
-            remaining[keylist[i]]-=1
-            remaining[keylist[j]]-=1
+
+while len(remaining) > 1:
+    for i in range(len(remaining)):
+        remaining = removeValues(remaining)
+        keylist = list(key for key in remaining)
+        if len(remaining) == 1:
+            break
+        for j in range(i+1,len(remaining)):
+            if (keylist[i], keylist[j]) not in G.edges():
+                G.add_edge(keylist[i],keylist[j])
+                remaining[keylist[i]]-=1
+                remaining[keylist[j]]-=1
+            else:
+                randomIndex = randrange(0,len(keylist))
+                while (keylist[i],keylist[randomIndex]) not in G.edges():
+                    randomIndex= randrange(0,len(keylist))
+                G.add_edge(keylist[i],keylist[j])
+                remaining[keylist[i]]-=1
+                remaining[keylist[randomIndex]]-=1
+            remaining = removeValues(remaining)
+            keylist = list(key for key in remaining)
 nx.draw(G)
 plt.show()

@@ -36,7 +36,7 @@ class Ui_MainWindow(object):
         self.kValueSlider = QtGui.QSlider(self.centralwidget)
         self.kValueSlider.setGeometry(QtCore.QRect(10, 40, 181, 41))
         self.kValueSlider.setAutoFillBackground(True)
-        self.kValueSlider.setMinimum(4)
+        self.kValueSlider.setMinimum(2)
         self.kValueSlider.setMaximum(16)
         self.kValueSlider.setSliderPosition(6)
         self.kValueSlider.setOrientation(QtCore.Qt.Horizontal)
@@ -126,8 +126,10 @@ class Ui_MainWindow(object):
 
     def applyButtonClicked(self):
         print("Apply button pressed ",self.kValueSlider.value())
-        self.kValueSlider.setValue(int(self.kValueHolder.text()))
-        
+        kValue = int(self.kValueHolder.text())
+        self.kValueSlider.setValue(kValue)
+        anonimize(self.graph,kValue)
+        self.plotNetwork()
 
     def displayChange(self, val):
         self.kValueHolder.setText(str(val))
