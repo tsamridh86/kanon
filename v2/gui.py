@@ -130,6 +130,8 @@ class Ui_MainWindow(object):
         self.kValueSlider.setValue(kValue)
         anonimize(self.graph,kValue)
         self.plotNetwork()
+        statstring = getstats(self.graph)
+        self.statsHolder.setText(statstring)
 
     def displayChange(self, val):
         self.kValueHolder.setText(str(val))
@@ -173,7 +175,7 @@ class Ui_MainWindow(object):
         self.statsHolder.setPlainText(_translate("MainWindow", "Stats:\n"
 "No. of Nodes :\n"
 "No. of Edges  :\n"
-"avg. k        :", None))
+"Avg Degree in graph :\n", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))

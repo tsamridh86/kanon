@@ -59,7 +59,7 @@ def generateNetwork(nodes,edges,graph):
 
 def clearNetwork(graph):
    graph.clear()
-   drawGraph()
+   drawGraph(graph)
    return graph
 
 
@@ -137,14 +137,21 @@ def anonimize(graph, kValue):
                randomIndex = randrange(0,len(keylist))
                while (keylist[i],keylist[randomIndex]) not in graph.edges():
                   randomIndex= randrange(0,len(keylist))
-                  graph.add_edge(keylist[i],keylist[j])
-                  remaining[keylist[i]]-=1
-                  remaining[keylist[randomIndex]]-=1
+               graph.add_edge(keylist[i],keylist[j])
+               remaining[keylist[i]]-=1
+               remaining[keylist[randomIndex]]-=1
             remaining = removeValues(remaining)
             keylist = list(key for key in remaining)
    drawGraph(graph)
    return graph
 
+def getstats(graph):
+  mainstring = "Stats:\n"
+  mainstring += "No of Nodes : "+str(len(graph))+"\n"
+  mainstring += "No of Edges : "+str(graph.number_of_edges())+"\n"
+  degree_list = list(graph.degree(graph.nodes()).values())
+  mainstring += "Avg Degree in graph : "+str(sum(degree_list)/len(degree_list))
+  return mainstring
 # print(nodes, edges)
 # Create new threads
 
