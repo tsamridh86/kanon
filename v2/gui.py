@@ -134,8 +134,6 @@ class Ui_MainWindow(object):
         self.kValueSlider.setValue(kValue)
         anonimize(self.graph,kValue)
         self.plotNetwork()
-        statstring = getstats(self.graph)
-        self.statsHolder.setPlainText(statstring)
 
     def displayChange(self, val):
         self.kValueHolder.setText(str(val))
@@ -163,6 +161,8 @@ class Ui_MainWindow(object):
     def plotNetwork(self):
         graph = generateNetwork(self.nodes,self.edges,self.graph)
         self.imageHolder.setPixmap(QtGui.QPixmap('plot.png'))
+        statstring = getstats(graph)
+        self.statsHolder.setPlainText(statstring)
         return graph
 
     def clearFiles(self):
