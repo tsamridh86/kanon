@@ -149,7 +149,9 @@ def getstats(graph):
   mainstring = "Stats:\n"
   mainstring += "No of Nodes : "+str(len(graph))+"\n"
   mainstring += "No of Edges : "+str(graph.number_of_edges())+"\n"
-  degree_list = list(graph.degree(graph.nodes()).values())
+  degree_list=[]
+  for key,value in nx.degree(graph):
+  	degree_list.append(key) 
   mainstring += "Avg Degree in graph : "+str(sum(degree_list)/len(degree_list))
   return mainstring
 # print(nodes, edges)

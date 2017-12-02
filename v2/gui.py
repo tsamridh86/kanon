@@ -131,7 +131,7 @@ class Ui_MainWindow(object):
         anonimize(self.graph,kValue)
         self.plotNetwork()
         statstring = getstats(self.graph)
-        self.statsHolder.setText(statstring)
+        self.statsHolder.setPlainText(statstring)
 
     def displayChange(self, val):
         self.kValueHolder.setText(str(val))
