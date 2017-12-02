@@ -126,8 +126,6 @@ def anonimize(graph, kValue):
       for i in range(len(remaining)):
          remaining = removeValues(remaining)
          keylist = list(key for key in remaining)
-         if len(remaining) == 1:
-            break
          for j in range(i+1,len(remaining)):
             if (keylist[i], keylist[j]) not in graph.edges():
                graph.add_edge(keylist[i],keylist[j])
@@ -145,6 +143,14 @@ def anonimize(graph, kValue):
    drawGraph(graph)
    return graph
 
+def saveToFile(directory,graph):
+   with open(directory+"/nodeList.txt","w") as nodeFile:
+      for node in graph.nodes():
+         nodeFile.write(str(node)+"\n")
+   with open(directory+"/edgeList.txt","w") as edgeFile:
+      for v1,v2 in graph.edges():
+         edgeFile.write(str(v1)+","+str(v2)+"\n")
+
 # print(nodes, edges)
 # Create new threads
 
@@ -157,8 +163,7 @@ def anonimize(graph, kValue):
 # thread1.join()
 # thread2.join()
 
-# print(nodes, edges)
-# G = nx.Graph()
+
 # G.add_nodes_from(nodes)
 # G.add_edges_from(edges)
 # nx.draw(G)
