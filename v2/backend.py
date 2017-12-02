@@ -12,13 +12,14 @@ class fileReaderThread (threading.Thread):
       self.fileName = fileName
    def run(self):
       # print ("Starting " + self.name)
-      self.function(self.fileName)
+      # self.function(self.fileName)
       # print ("Exiting " + self.name)
+      pass
 
-nodes = []
-edges = []
+# nodes = []
+# edges = []
 
-def nodeReader(fileName):
+def nodeReader(fileName , nodes):
    try:
       with open(fileName,"r") as file:
          for line in file:
@@ -27,10 +28,11 @@ def nodeReader(fileName):
             except ValueError as v:
                print ("file found an invalid node : ", v)
                continue
+      return nodes
    except FileNotFoundError as e :
       print("file was not found : ", e)
 
-def edgeReader(fileName):
+def edgeReader(fileName,edges):
    try:
       with open(fileName, "r") as file:
          for line in file:
@@ -40,8 +42,26 @@ def edgeReader(fileName):
             except ValueError as v:
                print("file has an invalid edge : ",v)
                continue
+      return edges
    except FileNotFoundError as e :
       print("file was not found : ", e)
+
+def drawGraph(graph):
+   nx.draw(graph)
+   plt.savefig("plot.png")
+   plt.gcf().clear()
+
+def generateNetwork(nodes,edges,graph):
+   graph.add_nodes_from(nodes)
+   graph.add_edges_from(edges)
+   drawGraph(graph)
+   return graph
+
+def clearNetwork(graph):
+   graph.clear()
+   drawGraph()
+   return graph
+
 
 def kAnonimizer ( degreeSequence , nodeId , n , k):
     originalDegreeSequence = degreeSequence
@@ -76,44 +96,7 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
                 else:
                     k = n
                     i-=1
-    return anonymizedDegreeSequence 
-
-
-# print(nodes, edges)
-# Create new threads
-
-thread1 = fileReaderThread(1, "nodeInputThread", nodeReader, "nodeList.txt")
-thread2 = fileReaderThread(2, "edgeInputThread", edgeReader, "edgeList.txt")
-
-# Start new Threads
-thread1.start()
-thread2.start()
-thread1.join()
-thread2.join()
-
-# print(nodes, edges)
-G = nx.Graph()
-G.add_nodes_from(nodes)
-G.add_edges_from(edges)
-view = nx.degree(G)
-view = sorted(view, key= lambda x: x[1] , reverse= True)
-degreeSequence = list(value for key,value in view)
-nodeId = list(key for key,value in view)
-initialView = {}
-for key,value in view:
-    initialView[key] = value
-# nx.draw(G)
-# plt.savefig("plot.png")
-# plt.show()    
-# print ("corresponding nodes :",nodeId)
-# print ("originalDegreeSequence: ",degreeSequence)
-degreeSequence = (kAnonimizer(degreeSequence,nodeId,len(nodeId),2))
-# print("anonymizedDegreeSequence : ", degreeSequence)
-finalView = {}
-for i in range(len(nodeId)):
-    finalView[nodeId[i]] = degreeSequence[i]
-print ("initial view : ", initialView)
-print ("final view   : ",finalView)
+    return anonymizedDegreeSequence
 
 def removeValues( nodes ):
     keylist = list(key for key in nodes)
@@ -122,34 +105,62 @@ def removeValues( nodes ):
             nodes.pop(keylist[i])
     return nodes
 
-remaining = {}
-for key in initialView:
-    if initialView[key] != finalView[key]:
-        remaining[key] = finalView[key] - initialView[key]
-
-
-print(remaining)
-
-
-while len(remaining) > 1:
-    for i in range(len(remaining)):
-        remaining = removeValues(remaining)
-        keylist = list(key for key in remaining)
-        if len(remaining) == 1:
+def anonimize(graph, kValue):
+   view = nx.degree(graph)
+   view = sorted(view, key= lambda x: x[1] , reverse= True)
+   degreeSequence = list(value for key,value in view)
+   nodeId = list(key for key,value in view)
+   initialView = {}
+   for key,value in view:
+       initialView[key] = value
+   degreeSequence = (kAnonimizer(degreeSequence,nodeId,len(nodeId),kValue))
+   finalView = {}
+   for i in range(len(nodeId)):
+       finalView[nodeId[i]] = degreeSequence[i]
+   remaining = {}
+   for key in initialView:
+       if initialView[key] != finalView[key]:
+           remaining[key] = finalView[key] - initialView[key]
+   # node connector
+   while len(remaining) > 1:
+      for i in range(len(remaining)):
+         remaining = removeValues(remaining)
+         keylist = list(key for key in remaining)
+         if len(remaining) == 1:
             break
-        for j in range(i+1,len(remaining)):
-            if (keylist[i], keylist[j]) not in G.edges():
-                G.add_edge(keylist[i],keylist[j])
-                remaining[keylist[i]]-=1
-                remaining[keylist[j]]-=1
+         for j in range(i+1,len(remaining)):
+            if (keylist[i], keylist[j]) not in graph.edges():
+               graph.add_edge(keylist[i],keylist[j])
+               remaining[keylist[i]]-=1
+               remaining[keylist[j]]-=1
             else:
-                randomIndex = randrange(0,len(keylist))
-                while (keylist[i],keylist[randomIndex]) not in G.edges():
-                    randomIndex= randrange(0,len(keylist))
-                G.add_edge(keylist[i],keylist[j])
-                remaining[keylist[i]]-=1
-                remaining[keylist[randomIndex]]-=1
+               randomIndex = randrange(0,len(keylist))
+               while (keylist[i],keylist[randomIndex]) not in graph.edges():
+                  randomIndex= randrange(0,len(keylist))
+                  graph.add_edge(keylist[i],keylist[j])
+                  remaining[keylist[i]]-=1
+                  remaining[keylist[randomIndex]]-=1
             remaining = removeValues(remaining)
             keylist = list(key for key in remaining)
-nx.draw(G)
-plt.show()
+   drawGraph(graph)
+   return graph
+
+# print(nodes, edges)
+# Create new threads
+
+# thread1 = fileReaderThread(1, "nodeInputThread", nodeReader, "nodeList.txt")
+# thread2 = fileReaderThread(2, "edgeInputThread", edgeReader, "edgeList.txt")
+
+# Start new Threads
+# thread1.start()
+# thread2.start()
+# thread1.join()
+# thread2.join()
+
+# print(nodes, edges)
+# G = nx.Graph()
+# G.add_nodes_from(nodes)
+# G.add_edges_from(edges)
+# nx.draw(G)
+# plt.savefig("plot.png")
+# plt.show()
