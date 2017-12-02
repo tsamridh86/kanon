@@ -122,11 +122,15 @@ class Ui_MainWindow(object):
         self.actionAdd_Edge.triggered.connect(self.edgeOpener)
         self.actionExit.triggered.connect(self.goOut)
         self.actionRemove_Files.triggered.connect(self.clearFiles)
+        self.actionSave_as.triggered.connect(self.saveFile)
         self.graph = self.plotNetwork()
 
     def applyButtonClicked(self):
         print("Apply button pressed ",self.kValueSlider.value())
         kValue = int(self.kValueHolder.text())
+        if kValue > len(self.graph):
+            kValue = len(self.graph)-1
+            print("Exceeded max k value")
         self.kValueSlider.setValue(kValue)
         anonimize(self.graph,kValue)
         self.plotNetwork()
@@ -140,11 +144,13 @@ class Ui_MainWindow(object):
         nodeFile = self.fileOpener()
         self.nodes = nodeReader(nodeFile,self.nodes)
         self.graph = self.plotNetwork()
+        self.setMaxSliderValue()
 
     def edgeOpener(self):
         edgeFile = self.fileOpener()
         self.edges = edgeReader(edgeFile,self.edges)
         self.graph = self.plotNetwork()
+        self.setMaxSliderValue()
 
     def fileOpener(self):
         dlg = QtGui.QFileDialog()
@@ -167,6 +173,21 @@ class Ui_MainWindow(object):
 
     def goOut(self):
         sys.exit()
+
+    def setMaxSliderValue(self):
+        if len(self.graph) == 0:
+            self.kValueSlider.setMaximum(16)
+        else:
+            self.kValueSlider.setMaximum(len(self.graph)-1)
+
+    def saveFile(self):
+        dlg = QtGui.QFileDialog()
+        dlg.setFileMode(QtGui.QFileDialog.DirectoryOnly)
+        dlg.exec_()
+        folderName = dlg.selectedFiles()
+        saveToFile(folderName[0],self.graph)
+        
+
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
