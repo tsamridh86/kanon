@@ -196,7 +196,7 @@ class Ui_MainWindow(object):
         self.statsHolder.setPlainText(_translate("MainWindow", "Stats:\n"
 "No. of Nodes :\n"
 "No. of Edges  :\n"
-"Avg Degree in graph :\n", None))
+"Avg Degree :\n", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))

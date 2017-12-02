@@ -150,7 +150,12 @@ def getstats(graph):
   degree_list=[]
   for key,value in nx.degree(graph):
   	degree_list.append(key) 
-  mainstring += "Avg Degree in graph : "+str(sum(degree_list)/len(degree_list))
+  try:
+  	mainstring += "Avg Degree : "+str(sum(degree_list)/len(degree_list))
+  except ZeroDivisionError:
+  	mainstring += "Avg Degree : - "
+  except Exception as e:
+  	print(e)
   return mainstring
 
 def saveToFile(directory,graph):
