@@ -178,7 +178,7 @@ class Ui_MainWindow(object):
         if len(self.graph) == 0:
             self.kValueSlider.setMaximum(16)
         else:
-            self.kValueSlider.setMaximum(len(self.graph)-1)
+            self.kValueSlider.setMaximum(len(self.graph))
 
     def saveFile(self):
         dlg = QtGui.QFileDialog()

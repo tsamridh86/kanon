@@ -122,11 +122,12 @@ def anonimize(graph, kValue):
        if initialView[key] != finalView[key]:
            remaining[key] = finalView[key] - initialView[key]
    # node connector
-   while len(remaining) > 1:
+   while len(remaining) > 0:
       for i in range(len(remaining)):
          remaining = removeValues(remaining)
          keylist = list(key for key in remaining)
-         for j in range(i+1,len(remaining)):
+         j = i + 1
+         while j < len(keylist):
             if (keylist[i], keylist[j]) not in graph.edges():
                graph.add_edge(keylist[i],keylist[j])
                remaining[keylist[i]]-=1
@@ -140,6 +141,7 @@ def anonimize(graph, kValue):
                remaining[keylist[randomIndex]]-=1
             remaining = removeValues(remaining)
             keylist = list(key for key in remaining)
+            j+=1
    drawGraph(graph)
    return graph
 
