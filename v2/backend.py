@@ -37,7 +37,7 @@ def edgeReader(fileName,edges):
       with open(fileName, "r") as file:
          for line in file:
             try:
-               v1,v2 = line.split(',')
+               v1,v2 = line.split(' ')
                edges.append((int(v1),int(v2)))
             except ValueError as v:
                print("file has an invalid edge : ",v)
@@ -47,7 +47,7 @@ def edgeReader(fileName,edges):
       print("file was not found : ", e)
 
 def drawGraph(graph):
-   nx.draw(graph)
+   nx.draw(graph,node_size=100)
    plt.savefig("plot.png")
    plt.gcf().clear()
 
