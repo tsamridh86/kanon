@@ -37,7 +37,7 @@ def edgeReader(fileName,edges):
       with open(fileName, "r") as file:
          for line in file:
             try:
-               v1,v2 = line.split(',')
+               v1,v2 = line.split(' ')
                edges.append((int(v1),int(v2)))
             except ValueError as v:
                print("file has an invalid edge : ",v)
@@ -47,7 +47,7 @@ def edgeReader(fileName,edges):
       print("file was not found : ", e)
 
 def drawGraph(graph):
-   nx.draw(graph)
+   nx.draw(graph,node_size=100)
    plt.savefig("plot.png")
    plt.gcf().clear()
 
@@ -126,7 +126,9 @@ def anonimize(graph, kValue):
       for i in range(len(remaining)):
          remaining = removeValues(remaining)
          keylist = list(key for key in remaining)
-         for j in range(i+1,len(remaining)):
+         j = i + 1
+         x = len(keylist)
+         while j < x:
             if (keylist[i], keylist[j]) not in graph.edges():
                graph.add_edge(keylist[i],keylist[j])
                remaining[keylist[i]]-=1
@@ -140,6 +142,8 @@ def anonimize(graph, kValue):
                remaining[keylist[randomIndex]]-=1
             remaining = removeValues(remaining)
             keylist = list(key for key in remaining)
+            x = len(keylist)
+            j+=1
    drawGraph(graph)
    return graph
 
@@ -164,7 +168,7 @@ def saveToFile(directory,graph):
          nodeFile.write(str(node)+"\n")
    with open(directory+"/edgeList.txt","w") as edgeFile:
       for v1,v2 in graph.edges():
-         edgeFile.write(str(v1)+","+str(v2)+"\n")
+         edgeFile.write(str(v1)+" "+str(v2)+"\n")
 
 # print(nodes, edges)
 # Create new threads
