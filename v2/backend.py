@@ -168,7 +168,7 @@ def saveToFile(directory,graph):
          nodeFile.write(str(node)+"\n")
    with open(directory+"/edgeList.txt","w") as edgeFile:
       for v1,v2 in graph.edges():
-         edgeFile.write(str(v1)+","+str(v2)+"\n")
+         edgeFile.write(str(v1)+" "+str(v2)+"\n")
 
 # print(nodes, edges)
 # Create new threads
