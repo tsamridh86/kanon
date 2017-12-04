@@ -79,10 +79,10 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
                 d_i = anonymizedDegreeSequence[i]
                 idk1 = 0 
                 idk2 = 0 
-                for _len in range(k+2,k+k_constant+2):
+                for _len in range(k+2,k+k_constant+1):
                     idk1 = idk1 + anonymizedDegreeSequence[k+2] - anonymizedDegreeSequence[_len]
                 c_merge = d_ik - d_i + idk1
-                for _len in range(k+1,k+k_constant+1):
+                for _len in range(k+1,k+k_constant):
                     idk2 = idk2 + anonymizedDegreeSequence[k+1] - anonymizedDegreeSequence[_len]
                 c_new = idk2
                 if c_new >= c_merge:
@@ -115,14 +115,14 @@ def anonimize(graph, kValue):
        initialView[key] = value
    degreeSequence = (kAnonimizer(degreeSequence,nodeId,len(nodeId),kValue))
    
-   print("degSeq",degreeSequence)
-   extra = len(nodeId) % kValue
-   print(extra)
-   if extra != 0:
-       ne = degreeSequence[len(nodeId)-extra-1]
-       for i in range(len(nodeId)-1,len(nodeId)-extra-1,-1):
-           degreeSequence[i] = ne
-           print(ne,degreeSequence)  
+   # print("degSeq",degreeSequence)
+   # extra = len(nodeId) % kValue
+   # print(extra)
+   # if extra != 0:
+   #     ne = degreeSequence[len(nodeId)-extra-1]
+   #     for i in range(len(nodeId)-1,len(nodeId)-extra-1,-1):
+   #         degreeSequence[i] = ne
+   #         print(ne,degreeSequence)  
 
    finalView = {}
    for i in range(len(nodeId)):
@@ -143,13 +143,13 @@ def anonimize(graph, kValue):
                graph.add_edge(keylist[i],keylist[j])
                remaining[keylist[i]]-=1
                remaining[keylist[j]]-=1
-            # else:
-            #    randomIndex = randrange(0,len(keylist))
-            #    while (keylist[i],keylist[randomIndex]) not in graph.edges():
-            #       randomIndex= randrange(0,len(keylist))
-            #    graph.add_edge(keylist[i],keylist[j])
-            #    remaining[keylist[i]]-=1
-            #    remaining[keylist[randomIndex]]-=1
+            else:
+               randomIndex = randrange(0,len(keylist))
+               while (keylist[i],keylist[randomIndex]) not in graph.edges():
+                  randomIndex= randrange(0,len(keylist))
+               graph.add_edge(keylist[i],keylist[j])
+               remaining[keylist[i]]-=1
+               remaining[keylist[randomIndex]]-=1
             remaining = removeValues(remaining)
             keylist = list(key for key in remaining)
             x = len(keylist)
@@ -165,12 +165,33 @@ def getstats(graph):
   for key,value in nx.degree(graph):
   	degree_list.append(key) 
   try:
-  	mainstring += "Avg Degree : "+str(sum(degree_list)/len(degree_list))
+  	avgDegree = sum(degree_list)/len(degree_list)
+  	avgPathDegree = 0
+  	avgClustering = 0
+  	edgeBetweeness = 0
+  	temp = {}
+  	if nx.is_connected(graph):
+  		avgPathDegree = nx.average_shortest_path_length(graph)
+  		avgClustering = nx.average_clustering(graph)
+  		temp = nx.edge_betweenness_centrality(graph)
+  	mainstring += "Avg Degree : {0:.4f} \n"
+  	mainstring += "Avg path len: {1:.4f} \n"
+  	mainstring += "Avg Clustering : {2:.4f} \n"
+  	mainstring += "Avg Betweeness : {3:.4f} \n"
+  	if len(temp) > 0:
+  		for key, value in temp:
+  			edgeBetweeness += value
+  		edgeBetweeness /= len(temp)
+  	return mainstring , avgDegree , avgPathDegree , avgClustering, edgeBetweeness
   except ZeroDivisionError:
-  	mainstring += "Avg Degree : - "
+  	mainstring += "Avg Degree : - \n"
+  	mainstring += "Avg Path len: - \n"
+  	mainstring += "Avg Clustering: - \n"
+  	mainstring += "Betweeness Centraility : {3:.4f} \n"
+  	return mainstring , 0 , 0 , 0 , 0
   except Exception as e:
   	print(e)
-  return mainstring
+  	return mainstring
 
 def saveToFile(directory,graph):
    with open(directory+"/nodeList.txt","w") as nodeFile:
@@ -179,7 +200,10 @@ def saveToFile(directory,graph):
    with open(directory+"/edgeList.txt","w") as edgeFile:
       for v1,v2 in graph.edges():
          edgeFile.write(str(v1)+" "+str(v2)+"\n")
-
+   with open(directory+"/clustering.txt","w") as clusterFile:
+   		clusterFile.write(str(nx.clustering(graph)))
+   with open(directory+"/betweenness.txt","w") as betweenFile:
+   		betweenFile.write(str(nx.edge_betweenness_centrality(graph)))
 # print(nodes, edges)
 # Create new threads
 
