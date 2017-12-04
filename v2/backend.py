@@ -114,6 +114,16 @@ def anonimize(graph, kValue):
    for key,value in view:
        initialView[key] = value
    degreeSequence = (kAnonimizer(degreeSequence,nodeId,len(nodeId),kValue))
+   
+   print("degSeq",degreeSequence)
+   extra = len(nodeId) % kValue
+   print(extra)
+   if extra != 0:
+       ne = degreeSequence[len(nodeId)-extra-1]
+       for i in range(len(nodeId)-1,len(nodeId)-extra-1,-1):
+           degreeSequence[i] = ne
+           print(ne,degreeSequence)  
+
    finalView = {}
    for i in range(len(nodeId)):
        finalView[nodeId[i]] = degreeSequence[i]
@@ -133,13 +143,13 @@ def anonimize(graph, kValue):
                graph.add_edge(keylist[i],keylist[j])
                remaining[keylist[i]]-=1
                remaining[keylist[j]]-=1
-            else:
-               randomIndex = randrange(0,len(keylist))
-               while (keylist[i],keylist[randomIndex]) not in graph.edges():
-                  randomIndex= randrange(0,len(keylist))
-               graph.add_edge(keylist[i],keylist[j])
-               remaining[keylist[i]]-=1
-               remaining[keylist[randomIndex]]-=1
+            # else:
+            #    randomIndex = randrange(0,len(keylist))
+            #    while (keylist[i],keylist[randomIndex]) not in graph.edges():
+            #       randomIndex= randrange(0,len(keylist))
+            #    graph.add_edge(keylist[i],keylist[j])
+            #    remaining[keylist[i]]-=1
+            #    remaining[keylist[randomIndex]]-=1
             remaining = removeValues(remaining)
             keylist = list(key for key in remaining)
             x = len(keylist)
