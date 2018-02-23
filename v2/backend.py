@@ -270,7 +270,7 @@ def getstats(graph):
   mainstring += "No of Edges : "+str(graph.number_of_edges())+"\n"
   degree_list=[]
   for key,value in nx.degree(graph):
-  	degree_list.append(key) 
+  	degree_list.append(value) 
   try:
   	avgDegree = sum(degree_list)/len(degree_list)
   	avgPathDegree = 0
