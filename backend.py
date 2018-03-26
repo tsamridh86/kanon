@@ -1,23 +1,7 @@
-import threading
 import networkx as nx
 import matplotlib.pyplot as plt
 from random import randrange
 
-class fileReaderThread (threading.Thread):
-   def __init__(self, threadID, name , function, fileName):
-      threading.Thread.__init__(self)
-      self.threadID = threadID
-      self.name = name
-      self.function = function
-      self.fileName = fileName
-   def run(self):
-      # print ("Starting " + self.name)
-      # self.function(self.fileName)
-      # print ("Exiting " + self.name)
-      pass
-
-# nodes = []
-# edges = []
 
 def nodeReader(fileName , nodes):
    try:
@@ -66,6 +50,7 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
     originalDegreeSequence = degreeSequence
     anonymizedDegreeSequence = degreeSequence
     k_constant = k
+    c_total = 0
     for i in range(n):
         if i < k :
             if i == 0:
@@ -84,6 +69,10 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
                 for _len in range(k+1,k+k_constant):
                     idk2 = idk2 + anonymizedDegreeSequence[k+1] - anonymizedDegreeSequence[_len]
                 c_new = idk2
+                if c_merge > c_new:
+                	c_total += c_new
+                else:
+                	c_total += c_merge
                 if c_new >= c_merge:
                     anonymizedDegreeSequence[i] = anonymizedDegreeSequence[i-1]
                     k += 1
@@ -95,6 +84,7 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
                 else:
                     k = n
                     i-=1
+    print ("\n\n\n\n Total Cost : ",c_total)
     return anonymizedDegreeSequence
 
 def removeValues( nodes ):
@@ -313,22 +303,3 @@ def saveToFile(directory,graph):
    		betweenFile.write(str(nx.edge_betweenness_centrality(graph)))
    with open(directory+"/degrees.txt","w") as degreeFile:
    		degreeFile.write(str(nx.degree(graph)))
-
-# print(nodes, edges)
-# Create new threads
-
-# thread1 = fileReaderThread(1, "nodeInputThread", nodeReader, "nodeList.txt")
-# thread2 = fileReaderThread(2, "edgeInputThread", edgeReader, "edgeList.txt")
-
-# Start new Threads
-# thread1.start()
-# thread2.start()
-# thread1.join()
-# thread2.join()
-
-
-# G.add_nodes_from(nodes)
-# G.add_edges_from(edges)
-# nx.draw(G)
-# plt.savefig("plot.png")
-# plt.show()
