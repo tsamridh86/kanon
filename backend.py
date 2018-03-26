@@ -1,6 +1,15 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from random import randrange
+import time
+def timeIt(function):
+	def wrapper (*args , **kwargs ):
+		start = time.time()
+		result = function(*args,**kwargs)
+		end = time.time()
+		print(function.__name__," took ",str((end-start)*1000), "mil sec")
+		return result
+	return wrapper
 
 
 def nodeReader(fileName , nodes):
@@ -16,6 +25,7 @@ def nodeReader(fileName , nodes):
    except FileNotFoundError as e :
       print("file was not found : ", e)
 
+@timeIt
 def edgeReader(fileName,edges):
    try:
       with open(fileName, "r") as file:
@@ -94,6 +104,7 @@ def removeValues( nodes ):
             nodes.pop(keylist[i])
     return nodes
 
+@timeIt
 def anonimize(graph, kValue):
    view = nx.degree(graph)
    view = sorted(view, key= lambda x: x[1] , reverse= True)
