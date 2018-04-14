@@ -110,20 +110,17 @@ def anonimize(graph, kValue):
    degreeSequence = list(value for key,value in view)
    nodeId = list(key for key,value in view)
    initialView = {}
-   print("degSeq initial",degreeSequence)
+
+   # initial degree sequence
    for key,value in view:
        initialView[key] = value
+   # anonimized sequence
    degreeSequence = (kAnonimizer(degreeSequence,nodeId,len(nodeId),kValue))
-
-   print("degSeq from kanon",degreeSequence)
    extra = len(nodeId) % kValue
-   print("extra",extra)
-   if extra != 0:
-       ne = degreeSequence[len(nodeId)-extra-1]
-       for i in range(len(nodeId)-1,len(nodeId)-extra-1,-1):
-           degreeSequence[i] = ne
-           print(ne,degreeSequence)  
-
+   while extra != 0 :
+       degreeSequence[-extra] = degreeSequence[-extra-1]
+       extra -= 1
+   
    finalView = {}
    for i in range(len(nodeId)):
        finalView[nodeId[i]] = degreeSequence[i]
@@ -131,92 +128,120 @@ def anonimize(graph, kValue):
    for key in initialView:
        if initialView[key] != finalView[key]:
            remaining[key] = finalView[key] - initialView[key]
-   print("bfor while remaining",remaining)
-   z = 1          
-   # node connector
-   
-   while len(remaining) > 1:
-      if z > len(remaining):
-        break
-      i=0  
-      while i < len(remaining): 
-      #for i in range(len(remaining)):
-      
-         remaining = removeValues(remaining)
-         keylist = list(key for key in remaining)
-         print("remaining key list",keylist)
-         j = i + 1
-         print("i -j-",i,j)
-         x = len(keylist)
-         print("x--",x)
-         while j < x:
-      
-            if (keylist[i], keylist[j]) not in graph.edges():
-               graph.add_edge(keylist[i],keylist[j])
-               remaining[keylist[i]]-=1
-               remaining[keylist[j]]-=1
-               remaining = removeValues(remaining)
-               keylist = list(key for key in remaining)
-               print("remaining in if ",remaining)
-               break
-            else:
-               print("in else") 
-               randomIndex = randrange(0,len(keylist))
-               if((keylist[i],keylist[randomIndex]) not in graph.edges() and i != randomIndex):     
-                   print("randomIndex",randomIndex)
-                   print("in else connected with", keylist[randomIndex])
-                   graph.add_edge(keylist[i],keylist[randomIndex])
-                   remaining[keylist[i]]-=1
-                   remaining[keylist[randomIndex]]-=1 
-                   remaining = removeValues(remaining)
-                   keylist = list(key for key in remaining)
-                   break  
-            print("in while remaining", remaining)
-            print("keylist",keylist)
-            x = len(keylist)
-            j+=1
-
-         print("after while i ",i)
-         i+=1
-
-      z+=1
-            
-         
-   remaining = removeValues(remaining)
-   keylist = list(key for key in remaining)
-   keyseq = readyToConnect(graph, kValue)
-   s=0
-   while(len(remaining)>0):
-      if(s>len(remaining)):
-        print("there is still remaining nodes")
-        break
-      # if (checkAlldegree(graph,kValue)):
-      #   print("all satisfied")
-      #   break
-      i=0
-      if(keylist[i] in remaining and len(keylist)>=i):
-        print("key[i] is in remainning-",keylist[i])
-        print("i",i)
-        print("keyseq",keyseq)
-        print("remain",remaining)
-        if len(keyseq)==0:
-          print("there no node avail to connect with remainings")
-          break
-        for p in keyseq:
-
-          if((keylist[i], p) not in graph.edges() and keylist[i] != p):
-            graph.add_edge(keylist[i], p)
-            remaining[keylist[i]]-=1
-            keyseq.remove(p)
-            remaining = removeValues(remaining)
-            keylist = list(key for key in remaining)
-            print("connected  with",p)
-            break
- 
-      #s+=1
-   oo = readyToConnect(graph,kValue)  #to print degree,val deictionary
+   # final Compensated view
+   totalIterations = sum(remaining.values())
+   for _ in range(totalIterations):
+        target = list(remaining.keys())[0]
+        print(target, remaining[target])
+        print(remaining)
+        neighbors = list(graph.neighbors(target))
+        allNodes = list(graph.nodes())
+        possiblePartners = list(set(allNodes)-set(neighbors))
+        possiblePartners.remove(target)
+        if len(possiblePartners) > 0:
+            # find the nearest neighbor
+            minLen = nx.shortest_path_length(graph,source=target,target=possiblePartners[0])
+            partnerIndex = 0
+            # find the most favorable partner
+            for q in range(len(possiblePartners)):
+                if nx.shortest_path_length(graph,source=target,target=possiblePartners[q]) < minLen :
+                    minLen = nx.shortest_path_length(graph,source=target,target=possiblePartners[q])
+                    partnerIndex = q
+            print("partner",possiblePartners[partnerIndex],target)
+            graph.add_edge(target,possiblePartners[partnerIndex])
+        remaining[target] -= 1 # been processed, remove from the list
+        # removes from the dict when it is empty 
+        if remaining[target] == 0:
+            remaining = { __ : remaining[__] for __ in remaining if __ != target }
    drawGraph(graph)
    return graph
+   # z = 1          
+   # # node connector
+   
+   # while len(remaining) > 1:
+   #    if z > len(remaining):
+   #      break
+   #    i=0  
+   #    while i < len(remaining): 
+   #    #for i in range(len(remaining)):
+      
+   #       remaining = removeValues(remaining)
+   #       keylist = list(key for key in remaining)
+   #       print("remaining key list",keylist)
+   #       j = i + 1
+   #       print("i -j-",i,j)
+   #       x = len(keylist)
+   #       print("x--",x)
+   #       while j < x:
+      
+   #          if (keylist[i], keylist[j]) not in graph.edges():
+   #             graph.add_edge(keylist[i],keylist[j])
+   #             remaining[keylist[i]]-=1
+   #             remaining[keylist[j]]-=1
+   #             remaining = removeValues(remaining)
+   #             keylist = list(key for key in remaining)
+   #             print("remaining in if ",remaining)
+   #             break
+   #          else:
+   #             print("in else") 
+   #             randomIndex = randrange(0,len(keylist))
+   #             if((keylist[i],keylist[randomIndex]) not in graph.edges() and i != randomIndex):     
+   #                 print("randomIndex",randomIndex)
+   #                 print("in else connected with", keylist[randomIndex])
+   #                 graph.add_edge(keylist[i],keylist[randomIndex])
+   #                 remaining[keylist[i]]-=1
+   #                 remaining[keylist[randomIndex]]-=1 
+   #                 remaining = removeValues(remaining)
+   #                 keylist = list(key for key in remaining)
+   #                 break  
+   #          print("in while remaining", remaining)
+   #          print("keylist",keylist)
+   #          x = len(keylist)
+   #          j+=1
+
+   #       print("after while i ",i)
+   #       i+=1
+
+   #    z+=1
+            
+         
+   # remaining = removeValues(remaining)
+   # keylist = list(key for key in remaining)
+   # keyseq = readyToConnect(graph, kValue)
+   # s=0
+   # while(len(remaining)>0):
+   #    if(s>len(remaining)):
+   #      print("there is still remaining nodes")
+   #      break
+   #    # if (checkAlldegree(graph,kValue)):
+   #    #   print("all satisfied")
+   #    #   break
+   #    i=0
+   #    if(keylist[i] in remaining and len(keylist)>=i):
+   #      print("key[i] is in remainning-",keylist[i])
+   #      print("i",i)
+   #      print("keyseq",keyseq)
+   #      print("remain",remaining)
+   #      if len(keyseq)==0:
+   #        print("there no node avail to connect with remainings")
+   #        break
+   #      for p in keyseq:
+
+   #        if((keylist[i], p) not in graph.edges() and keylist[i] != p):
+   #          graph.add_edge(keylist[i], p)
+   #          remaining[keylist[i]]-=1
+   #          keyseq.remove(p)
+   #          remaining = removeValues(remaining)
+   #          keylist = list(key for key in remaining)
+   #          print("connected  with",p)
+   #          break
+ 
+   #    #s+=1
+   # oo = readyToConnect(graph,kValue)  #to print degree,val deictionary
+   # drawGraph(graph)
+   # return graph
+
+
 def checkAlldegree(graph, kValue):
   oldDict = nx.degree(graph)
   newDict = {}
@@ -270,35 +295,35 @@ def getstats(graph):
   mainstring += "No of Edges : "+str(graph.number_of_edges())+"\n"
   degree_list=[]
   for key,value in nx.degree(graph):
-  	degree_list.append(value) 
+    degree_list.append(value) 
   try:
-  	avgDegree = sum(degree_list)/len(degree_list)
-  	avgPathDegree = 0
-  	avgClustering = 0
-  	edgeBetweeness = 0
-  	temp = {}
-  	if nx.is_connected(graph):
-  		avgPathDegree = nx.average_shortest_path_length(graph)
-  		avgClustering = nx.average_clustering(graph)
-  		temp = nx.edge_betweenness_centrality(graph)
-  	mainstring += "Avg Degree : {0:.4f} \n"
-  	mainstring += "Avg path len: {1:.4f} \n"
-  	mainstring += "Avg Clustering : {2:.4f} \n"
-  	mainstring += "Avg Betweeness : {3:.4f} \n"
-  	if len(temp) > 0:
-  		for key, value in temp:
-  			edgeBetweeness += value
-  		edgeBetweeness /= len(temp)
-  	return mainstring , avgDegree , avgPathDegree , avgClustering, edgeBetweeness
+    avgDegree = sum(degree_list)/len(degree_list)
+    avgPathDegree = 0
+    avgClustering = 0
+    edgeBetweeness = 0
+    temp = {}
+    if nx.is_connected(graph):
+        avgPathDegree = nx.average_shortest_path_length(graph)
+        avgClustering = nx.average_clustering(graph)
+        temp = nx.edge_betweenness_centrality(graph)
+    mainstring += "Avg Degree : {0:.4f} \n"
+    mainstring += "Avg path len: {1:.4f} \n"
+    mainstring += "Avg Clustering : {2:.4f} \n"
+    mainstring += "Avg Betweeness : {3:.4f} \n"
+    if len(temp) > 0:
+        for key, value in temp:
+            edgeBetweeness += value
+        edgeBetweeness /= len(temp)
+    return mainstring , avgDegree , avgPathDegree , avgClustering, edgeBetweeness
   except ZeroDivisionError:
-  	mainstring += "Avg Degree : - \n"
-  	mainstring += "Avg Path len: - \n"
-  	mainstring += "Avg Clustering: - \n"
-  	mainstring += "Betweeness Centraility : {3:.4f} \n"
-  	return mainstring , 0 , 0 , 0 , 0
+    mainstring += "Avg Degree : - \n"
+    mainstring += "Avg Path len: - \n"
+    mainstring += "Avg Clustering: - \n"
+    mainstring += "Betweeness Centraility : {3:.4f} \n"
+    return mainstring , 0 , 0 , 0 , 0
   except Exception as e:
-  	print(e)
-  	return mainstring
+    print(e)
+    return mainstring
 
 def saveToFile(directory,graph):
    with open(directory+"/nodeList.txt","w") as nodeFile:
@@ -308,11 +333,11 @@ def saveToFile(directory,graph):
       for v1,v2 in graph.edges():
          edgeFile.write(str(v1)+" "+str(v2)+"\n")
    with open(directory+"/clustering.txt","w") as clusterFile:
-   		clusterFile.write(str(nx.clustering(graph)))
+        clusterFile.write(str(nx.clustering(graph)))
    with open(directory+"/betweenness.txt","w") as betweenFile:
-   		betweenFile.write(str(nx.edge_betweenness_centrality(graph)))
+        betweenFile.write(str(nx.edge_betweenness_centrality(graph)))
    with open(directory+"/degrees.txt","w") as degreeFile:
-   		degreeFile.write(str(nx.degree(graph)))
+        degreeFile.write(str(nx.degree(graph)))
 
 # print(nodes, edges)
 # Create new threads
