@@ -1,16 +1,23 @@
+import threading
 import networkx as nx
 import matplotlib.pyplot as plt
 from random import randrange
-import time
-def timeIt(function):
-	def wrapper (*args , **kwargs ):
-		start = time.time()
-		result = function(*args,**kwargs)
-		end = time.time()
-		print(function.__name__," took ",str((end-start)*1000), "mil sec")
-		return result
-	return wrapper
 
+class fileReaderThread (threading.Thread):
+   def __init__(self, threadID, name , function, fileName):
+      threading.Thread.__init__(self)
+      self.threadID = threadID
+      self.name = name
+      self.function = function
+      self.fileName = fileName
+   def run(self):
+      # print ("Starting " + self.name)
+      # self.function(self.fileName)
+      # print ("Exiting " + self.name)
+      pass
+
+# nodes = []
+# edges = []
 
 def nodeReader(fileName , nodes):
    try:
@@ -25,7 +32,6 @@ def nodeReader(fileName , nodes):
    except FileNotFoundError as e :
       print("file was not found : ", e)
 
-@timeIt
 def edgeReader(fileName,edges):
    try:
       with open(fileName, "r") as file:
@@ -60,7 +66,6 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
     originalDegreeSequence = degreeSequence
     anonymizedDegreeSequence = degreeSequence
     k_constant = k
-    c_total = 0
     for i in range(n):
         if i < k :
             if i == 0:
@@ -79,10 +84,6 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
                 for _len in range(k+1,k+k_constant):
                     idk2 = idk2 + anonymizedDegreeSequence[k+1] - anonymizedDegreeSequence[_len]
                 c_new = idk2
-                if c_merge > c_new:
-                	c_total += c_new
-                else:
-                	c_total += c_merge
                 if c_new >= c_merge:
                     anonymizedDegreeSequence[i] = anonymizedDegreeSequence[i-1]
                     k += 1
@@ -94,7 +95,6 @@ def kAnonimizer ( degreeSequence , nodeId , n , k):
                 else:
                     k = n
                     i-=1
-    print ("\n\n\n\n Total Cost : ",c_total)
     return anonymizedDegreeSequence
 
 def removeValues( nodes ):
@@ -104,7 +104,6 @@ def removeValues( nodes ):
             nodes.pop(keylist[i])
     return nodes
 
-@timeIt
 def anonimize(graph, kValue):
    view = nx.degree(graph)
    view = sorted(view, key= lambda x: x[1] , reverse= True)
@@ -139,11 +138,6 @@ def anonimize(graph, kValue):
         allNodes = list(graph.nodes())
         possiblePartners = list(set(allNodes)-set(neighbors))
         possiblePartners.remove(target)
-        temp = []
-        for partner in possiblePartners:
-            if nx.has_path(graph,target,partner):
-                temp.append(partner)
-        possiblePartners = temp
         if len(possiblePartners) > 0:
             # find the nearest neighbor
             minLen = nx.shortest_path_length(graph,source=target,target=possiblePartners[0])

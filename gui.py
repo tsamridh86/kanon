@@ -23,7 +23,6 @@ class MyWindow(QtGui.QMainWindow):
         self.graph = self.plotNetwork()
 
     def applyButtonClicked(self):
-        print("Apply button pressed ",self.kValueSlider.value())
         kValue = int(self.kValueHolder.text())
         if kValue > len(self.graph):
             kValue = len(self.graph)-1
