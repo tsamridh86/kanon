@@ -132,29 +132,25 @@ def anonimize(graph, kValue):
    # final Compensated view
    totalIterations = sum(remaining.values())
    for _ in range(totalIterations):
-        target = list(remaining.keys())[0]
+        target = list(remaining.keys())[0] # choose the node to be anonimized
         print(target, remaining[target])
         print(remaining)
+        
+        # find friends and friend of friend
         neighbors = list(graph.neighbors(target))
-        allNodes = list(graph.nodes())
-        possiblePartners = list(set(allNodes)-set(neighbors))
+        doubleNeighbours = set()
+        for neighbor in neighbors:
+            temp = set(list(graph.neighbors(neighbor)))
+            doubleNeighbours = doubleNeighbours | temp
+        neighbors = set(neighbors)
+        
+        # subtract those sets
+        possiblePartners = list(doubleNeighbours - neighbors)
         possiblePartners.remove(target)
-        temp = []
-        for partner in possiblePartners:
-            if nx.has_path(graph,target,partner):
-                temp.append(partner)
-        possiblePartners = temp
+        # connect the nearest one possible
         if len(possiblePartners) > 0:
-            # find the nearest neighbor
-            minLen = nx.shortest_path_length(graph,source=target,target=possiblePartners[0])
-            partnerIndex = 0
-            # find the most favorable partner
-            for q in range(len(possiblePartners)):
-                if nx.shortest_path_length(graph,source=target,target=possiblePartners[q]) < minLen :
-                    minLen = nx.shortest_path_length(graph,source=target,target=possiblePartners[q])
-                    partnerIndex = q
-            print("partner",possiblePartners[partnerIndex],target)
-            graph.add_edge(target,possiblePartners[partnerIndex])
+            print("partner",possiblePartners[0],target)
+            graph.add_edge(target,possiblePartners[0])
         remaining[target] -= 1 # been processed, remove from the list
         # removes from the dict when it is empty 
         if remaining[target] == 0:
